@@ -13,7 +13,7 @@
     },
     {
       "name": "acq_list",
-      "from": "submitter"
+      "from": "passthrough"
     },
     {
       "name": "spyddder_extract_version",
