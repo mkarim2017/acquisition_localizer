@@ -38,11 +38,11 @@ sling_completion_max_sec = 10800
 
 class ACQ:
     def __init__(self, acq_id, acq_data, localized=False, job_id=None, job_status = None):
-	self.acq_id=acq_id
-	self.acq_data = acq_data
-	self.localized = localized
+        self.acq_id=acq_id
+        self.acq_data = acq_data
+        self.localized = localized
         self.job_id = job_id
-	self.job_status = job_status
+        self.job_status = job_status
 
 def get_acq_object(acq_id, acq_data, localized=False, job_id=None, job_status = None):
     return {
