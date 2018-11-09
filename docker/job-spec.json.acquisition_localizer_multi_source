@@ -20,7 +20,7 @@
       "destination": "context"
     },
      {
-      "name": "acq_list",
+      "name": "query",
       "destination": "context"
     },
     {
