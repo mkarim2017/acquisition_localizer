@@ -16,11 +16,11 @@
   "time_limit": 87000, 
   "params" : [
     {
-      "name": "project",
+      "name": "query",
       "destination": "context"
     },
-     {
-      "name": "query",
+    {
+      "name": "project",
       "destination": "context"
     },
     {
