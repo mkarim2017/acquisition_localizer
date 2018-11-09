@@ -37,18 +37,16 @@ sling_completion_max_sec = 10800
 
 
 class ACQ:
-    def __init__(self, acq_id, acq_type, acq_data, localized=False, job_id=None, job_status = None):
+    def __init__(self, acq_id, acq_data, localized=False, job_id=None, job_status = None):
 	self.acq_id=acq_id
-	self.acq_type = acq_type
 	self.acq_data = acq_data
 	self.localized = localized
         self.job_id = job_id
 	self.job_status = job_status
 
-def get_acq_object(acq_id, acq_type, acq_data, localized=False, job_id=None, job_status = None):
+def get_acq_object(acq_id, acq_data, localized=False, job_id=None, job_status = None):
     return {
         "acq_id": acq_id,
-        "acq_type":  acq_type,
         "acq_data" :acq_data,
         "localized" : localized,
         "job_id": job_id,
@@ -356,7 +354,6 @@ def resolve_source(ctx_file):
 
     # Find out status of all Master ACQs, create a ACQ object with that and update acq_info dictionary
     for acq in acq_list:
- 	acq_type = "master"
 	#logger.info(acq)
         #acq_data = util.get_acquisition_data(acq)[0]['fields']['partial'][0]
         acq_data = util.get_partial_grq_data(acq)['fields']['partial'][0]
@@ -364,30 +361,16 @@ def resolve_source(ctx_file):
         if status:
             # status=1
             logger.info("%s exists" %acq_data['metadata']['identifier'])
-            acq_info[acq]=get_acq_object(acq, acq_type, acq_data, 1)
+            acq_info[acq]=get_acq_object(acq, acq_data, 1)
         else:
             #status = 0
             logger.info("%s does NOT exist"%acq_data['metadata']['identifier'])
-            acq_info[acq]=get_acq_object(acq, acq_type, acq_data, 0)
+            acq_info[acq]=get_acq_object(acq, acq_data, 0)
 
 
-    # Find out status of all Slave ACQs, create a ACQ object with that and update acq_info dictionary
-    for acq in slave_acqs:
-        #logger.info(acq)
-	acq_type = "slave"
-        #acq_data = util.get_acquisition_data(acq)[0]['fields']['partial'][0]
-	#logger.info("ACQ value : %s" %acq)
-	acq_data = util.get_partial_grq_data(acq)['fields']['partial'][0]
-        status = check_slc_status(acq_data['metadata']['identifier'])
-        if status:
-	    # status=1
-            logger.info("%s exists" %acq_data['metadata']['identifier'])
-	    acq_info[acq]=get_acq_object(acq, acq_type, acq_data, 1)
-        else:
-	    #status = 0
-	    logger.info("%s does NOT exist"%acq_data['metadata']['identifier'])
-	    acq_info[acq]=get_acq_object(acq, acq_type, acq_data, 0)
+    sling(acq_info, spyddder_extract_version, acquisition_localizer_version, project, job_priority, job_type, job_version)
 
+    '''
     acq_infoes =[]
     projects = []
     job_priorities = []
@@ -396,14 +379,6 @@ def resolve_source(ctx_file):
     spyddder_extract_versions = []
     acquisition_localizer_versions = []
     #standard_product_ifg_versions = []
-    starttimes = []
-    endtimes = []
-    bboxes = []
-    union_geojsons =[]
-    master_scenes = []
-    slave_scenes = []
-    master_scenes.append(master_scene)
-    slave_scenes.append(slave_scene)
 
 
     acq_infoes.append(acq_info)
@@ -422,12 +397,11 @@ def resolve_source(ctx_file):
     
     #return acq_infoes, spyddder_extract_versions, acquisition_localizer_versions, standard_product_ifg_versions, projects, job_priorities, job_types, job_versions
     return acq_info, spyddder_extract_version, acquisition_localizer_version, project, job_priority, job_type, job_version, dem_type, track, starttime, endtime, master_scenes, slave_scenes, union_geojson, bbox
+    '''
 
 
-def process_sling_job(acq_list, 
 
-
-def sling(acq_info, spyddder_extract_version, acquisition_localizer_version, project, job_priority, job_type, job_version, dem_type, track, starttime, endtime, master_scene, slave_scene, union_geojson, bbox):
+def sling(acq_info, spyddder_extract_version, acquisition_localizer_version, project, job_priority, job_type, job_version):
     '''
 	This function checks if any ACQ that has not been ingested yet and sling them.
     '''
@@ -520,7 +494,7 @@ def sling(acq_info, spyddder_extract_version, acquisition_localizer_version, pro
                 raise RuntimeError("Error : SLC not available %.2f min after sling jobs completed!!" %(delta/60))
             time.sleep(60)
 
-
+    '''
     # At this point, we have all the slc downloaded and we are ready to submit a create standard product job
     acq_infoes =[]
     projects = []
@@ -553,7 +527,7 @@ def sling(acq_info, spyddder_extract_version, acquisition_localizer_version, pro
 
     return acq_infoes, projects, job_priorities, dem_types, tracks, starttimes, endtimes, master_scenes, slave_scenes, union_geojsons, bboxes
 
-
+    '''
 
         
 
@@ -571,216 +545,7 @@ def check_all_job_completed(acq_info):
 
 
 
-def publish_localized_info( acq_info, project, job_priority, dem_type, track, starttime, endtime, master_scene, slave_scene, union_geojson, bbox, wuid=None, job_num=None):
-    for i in range(len(project)):
-        publish_data( acq_info[i], project[i], job_priority[i], dem_type[i], track[i], starttime[i], endtime[i], master_scene[i], slave_scene[i], union_geojson[i], bbox[i])
 
-def publish_data( acq_info, project, job_priority, dem_type, track,starttime, endtime, master_scene, slave_scene, union_geojson, bbox, wuid=None, job_num=None):
-    """Map function for create interferogram job json creation."""
-
-    logger.info("\n\n\n PUBLISH IFG JOB!!!")
-    logger.info("project : %s " %project)
-    logger.info("dem type : %s " %dem_type)
-    logger.info("track : %s" %track)
-    logger.info("starttime, endtime, : %s : %s " %(starttime, endtime))
-    logger.info(" master_scene, slave_scene : %s, %s" %(master_scene, slave_scene))
-    logger.info(" union_geojson : %s, bbox : %s " %( union_geojson, bbox))
-    master_ids_str=""
-    master_ids_list=[]
-
-    slave_ids_str=""
-    slave_ids_list=[]
-
-    #version = get_version()
-    version = "v2.0.0"
-
-    if type(project) is list:
-        project = project[0]
-    logger.info("project : %s" %project)
-    
-    master_acq_list = []
-    slave_acq_list = []
-
-    for acq in acq_info.keys():
-	acq_data = acq_info[acq]['acq_data']
-	acq_type = acq_info[acq]['acq_type']
-	identifier =  acq_data["metadata"]["identifier"]
-        logger.info("identifier : %s" %identifier)
-	if acq_type == "master":
-	    master_ids_list.append(identifier)
-            master_acq_list.append(acq)
- 
-	    if master_ids_str=="":
-		master_ids_str=identifier
-	    else:
-		master_ids_str += " "+identifier
-
-	elif acq_type == "slave":
-            slave_acq_list.append(acq)
-            slave_ids_list.append(identifier)
-            if slave_ids_str=="":
-                slave_ids_str=identifier
-            else:
-                slave_ids_str += " "+identifier
-
-
-    logger.info("master_ids_str : %s" %master_ids_str)
-    logger.info("slave_ids_str : %s" %slave_ids_str)
-    # set job type and disk space reqs
-    disk_usage = "300GB"
-
-    # set job queue based on project
-    job_queue = "%s-job_worker-large" % project
-    list_master_dt = ""
-    list_slave_dt = ""
-    #job_type = "job-standard-product-ifg:%s" %standard_product_ifg_version
-    try:
-        list_master_dt, list_slave_dt = util.get_acq_dates(master_acq_list, slave_acq_list)
-    except Exception as err:
-         logger.info(str(err))
-       
-    id_hash = hashlib.md5(json.dumps([
-	job_priority,
-	master_ids_str,
-	slave_ids_str,
-        dem_type
-    ]).encode("utf8")).hexdigest()
-
-
-    orbit_type = 'poeorb'
-
-    id = IFG_CFG_ID_TMPL.format('M', len(master_scene), len(slave_scene), track, list_master_dt, list_slave_dt, orbit_type, id_hash[0:4])
-
-    #id = "standard-product-ifg-cfg-%s" %id_hash[0:4]
-    prod_dir =  id
-    os.makedirs(prod_dir, 0o755)
-
-    met_file = os.path.join(prod_dir, "{}.met.json".format(id))
-    ds_file = os.path.join(prod_dir, "{}.dataset.json".format(id))
-  
-    #with open(met_file) as f: md = json.load(f)
-    md = {}
-    md['id'] = id
-    md['project'] =  project,
-    md['master_ids'] = master_ids_str
-    md['slave_ids'] = slave_ids_str
-    #md['standard_product_ifg_version'] = standard_product_ifg_version
-    md['priority'] = job_priority
-    md['azimuth_looks'] = 19
-    md['range_looks'] = 7
-    md['filter_strength'] =  0.5
-    md['precise_orbit_only'] = 'true'
-    md['auto_bbox'] = 'true'
-    md['_disk_usage'] = disk_usage
-    md['soft_time_limit'] =  86400
-    md['time_limit'] = 86700
-    md['dem_type'] = dem_type
-    md['track'] = track
-    md['starttime'] = starttime
-    md['endtime'] = endtime
-    md['union_geojson'] = union_geojson
-    md['master_scenes'] = master_scene
-    md['slave_scenes'] = slave_scene
-
-    if bbox:
-        md['bbox'] = bbox
-
-    with open(met_file, 'w') as f: json.dump(md, f, indent=2)
-
-
-    print("creating dataset file : %s" %ds_file)
-    create_dataset_json(id, version, met_file, ds_file)
-
-def submit_ifg_job( acq_info, project, standard_product_ifg_version, job_priority, wuid=None, job_num=None):
-    """Map function for create interferogram job json creation."""
-
-    if wuid is None or job_num is None:
-        raise RuntimeError("Need to specify workunit id and job num.")
-    logger.info("\n\n\n SUBMIT IFG JOB!!!")
-    master_ids_str=""
-    master_ids_list=[]
-
-    slave_ids_str=""
-    slave_ids_list=[]
-
-
-    logger.info("project : %s" %project)
-
-    for acq in acq_info.keys():
-	acq_data = acq_info[acq]['acq_data']
-	acq_type = acq_info[acq]['acq_type']
-	identifier =  acq_data["metadata"]["identifier"]
-        logger.info("identifier : %s" %identifier)
-	if acq_type == "master":
-	    master_ids_list.append(identifier)
-	    if master_ids_str=="":
-		master_ids_str=identifier
-	    else:
-		master_ids_str += " "+identifier
-
-	elif acq_type == "slave":
-            slave_ids_list.append(identifier)
-            if slave_ids_str=="":
-                slave_ids_str=identifier
-            else:
-                slave_ids_str += " "+identifier
-
-
-    logger.info("master_ids_str : %s" %master_ids_str)
-    logger.info("slave_ids_str : %s" %slave_ids_str)
-    # set job type and disk space reqs
-    disk_usage = "300GB"
-
-    # set job queue based on project
-    job_queue = "%s-job_worker-large" % project
-   
-    job_type = "job-standard-product-ifg"
-
-    job_hash = hashlib.md5(json.dumps([
-	job_priority,
-	master_ids_str,
-	slave_ids_str
-    ])).hexdigest()
-
-
-
-
-    return {
-        "job_name": "%s-%s" % (job_type, job_hash[0:4]),
-        "job_type": "job:%s" % job_type,
-        "job_queue": job_queue,
-        "container_mappings": {
-            "/home/ops/.netrc": "/home/ops/.netrc",
-            "/home/ops/.aws": "/home/ops/.aws",
-            "/home/ops/verdi/etc/settings.conf": "/home/ops/ariamh/conf/settings.conf"
-        },    
-        "soft_time_limit": 86400,
-        "time_limit": 86700,
-        "payload": {
-            # sciflo tracking info
-            "_sciflo_wuid": wuid,
-            "_sciflo_job_num": job_num,
-
-            # job params
-            "project": project,
-            "master_ids": master_ids_str,
-	    "slave_ids": slave_ids_str,
-	    "job_priority" : job_priority,
-	    "azimuth_looks" : 19,
-	    "range_looks" : 7,
-	    "filter_strength" : 0.5,
-	    "precise_orbit_only" : "true",
-	    "auto_bbox" : "true",
-	    "priority" : job_priority,
-
-            # v2 cmd
-            "_command": "/home/ops/ariamh/interferogram/sentinel/sciflo_create_standard_product.sh",
-
-            # disk usage
-            "_disk_usage": disk_usage,
-
-        }
-    }
 
 def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_versions, acq_data, priority):
 
