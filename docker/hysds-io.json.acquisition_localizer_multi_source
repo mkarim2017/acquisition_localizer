@@ -12,6 +12,10 @@
       "enumerables": ["aria", "grfn", "mem", "urgent-response", "dwr"]
     },
     {
+      "name": "acq_list",
+      "from": "submitter"
+    },
+    {
       "name": "spyddder_extract_version",
       "from": "submitter",
       "type": "jobspec_version",

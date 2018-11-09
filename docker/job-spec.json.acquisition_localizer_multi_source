@@ -19,6 +19,10 @@
       "name": "project",
       "destination": "context"
     },
+     {
+      "name": "acq_list",
+      "destination": "context"
+    },
     {
       "name": "spyddder_extract_version",
       "destination": "context"
