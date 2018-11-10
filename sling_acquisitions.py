@@ -247,6 +247,7 @@ def check_slc_status(slc_id):
 
     return False
 def get_acq_data_from_list(acq_list):
+    logger.info("get_acq_data_from_list")
     acq_info = {}
     # Find out status of all Master ACQs, create a ACQ object with that and update acq_info dictionary 
     for acq in acq_list: 
@@ -265,6 +266,7 @@ def get_acq_data_from_list(acq_list):
 
 
 def get_acq_data_from_query(query):
+    logger.info("get_acq_data_from_query")
     acq_info = {}
 
     hits = util.get_query_data(query)
@@ -328,11 +330,19 @@ def resolve_source(ctx_file):
 
     acq_info = {}
 
-    if "query" in ctx:
-        acq_info = get_acq_data_from_query(ctx["query"])
-    elif "acq_list" in ctx:
-        acq_info = get_acq_data_from_list(ctx["acq_list"])
-        
+    if "acq_list" in ctx:
+        acq_list = ctx["acq_list"]
+        logger.info("Acq List Type : %s" %type(acq_list))
+        acq_info = get_acq_data_from_list(acq_list)
+    elif "query" in ctx:
+        query = ctx("query")
+        logger.info("query type : %s" %type(query))
+        if query == "":
+            logger.info("Query is Empty")
+        acq_info = get_acq_data_from_query(query)
+    else:
+        raise RuntimeError("Neither Query nor Acquistion List Present!!"
+)   
     #acq_list = ctx["input_metadata"]["acq_list"]   
  
     if "spyddder_extract_version" in ctx:
@@ -357,35 +367,6 @@ def resolve_source(ctx_file):
 
 
     sling(acq_info, spyddder_extract_version, acquisition_localizer_version, project, job_priority, job_type, job_version)
-
-    '''
-    acq_infoes =[]
-    projects = []
-    job_priorities = []
-    job_types = []
-    job_versions = []
-    spyddder_extract_versions = []
-    acquisition_localizer_versions = []
-    #standard_product_ifg_versions = []
-
-
-    acq_infoes.append(acq_info)
-    projects.append(project)
-    job_priorities.append(job_priority)
-    job_types.append(job_type)
-    job_versions.append(job_version)
-    spyddder_extract_versions.append(spyddder_extract_version)
-    acquisition_localizer_versions.append(acquisition_localizer_version)
-    #standard_product_ifg_versions.append(standard_product_ifg_version)
-    starttimes.append(starttime)
-    endtimes.append(endtime)
-    union_geojsons.append(union_geojson)
-    if bbox:
-        bboxes.append(bbox)
-    
-    #return acq_infoes, spyddder_extract_versions, acquisition_localizer_versions, standard_product_ifg_versions, projects, job_priorities, job_types, job_versions
-    return acq_info, spyddder_extract_version, acquisition_localizer_version, project, job_priority, job_type, job_version, dem_type, track, starttime, endtime, master_scenes, slave_scenes, union_geojson, bbox
-    '''
 
 
 
