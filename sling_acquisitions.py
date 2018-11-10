@@ -246,6 +246,23 @@ def check_slc_status(slc_id):
         return True
 
     return False
+def get_acq_data_from_list(acq_list):
+    acq_info = {}
+    # Find out status of all Master ACQs, create a ACQ object with that and update acq_info dictionary 
+    for acq in acq_list: 
+        #logger.info(acq) 
+        #acq_data = util.get_acquisition_data(acq)[0]['fields']['partial'][0] 
+        acq_data = util.get_partial_grq_data(acq)['fields']['partial'][0] 
+        status = check_slc_status(acq_data['metadata']['identifier']) 
+        if status: 
+            # status=1 
+            logger.info("%s exists" %acq_data['metadata']['identifier']) 
+            acq_info[acq]=get_acq_object(acq, acq_data, 1) 
+        else: 
+            #status = 0 
+            logger.info("%s does NOT exist"%acq_data['metadata']['identifier']) 
+            acq_info[acq]=get_acq_object(acq, acq_data, 0)
+
 
 def get_acq_data_from_query(query):
     acq_info = {}
@@ -312,9 +329,9 @@ def resolve_source(ctx_file):
 
     if "query" in ctx:
         acq_info = get_acq_data_from_query(ctx["query"])
-    exit(0)
-     
-    acq_list = []   
+    elif "acq_list" in ctx:
+        acq_info = get_acq_data_from_list(ctx["acq_list"])
+        
     #acq_list = ctx["input_metadata"]["acq_list"]   
  
     if "spyddder_extract_version" in ctx:
@@ -334,26 +351,8 @@ def resolve_source(ctx_file):
     prod_dates = []
    
 
-    acq_info = {}
     
     index_suffix = "S1-IW_ACQ"
-
-
-
-    # Find out status of all Master ACQs, create a ACQ object with that and update acq_info dictionary
-    for acq in acq_list:
-	#logger.info(acq)
-        #acq_data = util.get_acquisition_data(acq)[0]['fields']['partial'][0]
-        acq_data = util.get_partial_grq_data(acq)['fields']['partial'][0]
-        status = check_slc_status(acq_data['metadata']['identifier'])
-        if status:
-            # status=1
-            logger.info("%s exists" %acq_data['metadata']['identifier'])
-            acq_info[acq]=get_acq_object(acq, acq_data, 1)
-        else:
-            #status = 0
-            logger.info("%s does NOT exist"%acq_data['metadata']['identifier'])
-            acq_info[acq]=get_acq_object(acq, acq_data, 0)
 
 
     sling(acq_info, spyddder_extract_version, acquisition_localizer_version, project, job_priority, job_type, job_version)
