@@ -335,7 +335,7 @@ def resolve_source(ctx_file):
         logger.info("Acq List Type : %s" %type(acq_list))
         acq_info = get_acq_data_from_list(acq_list)
     elif "query" in ctx:
-        query = ctx("query")
+        query = ctx["query"]
         logger.info("query type : %s" %type(query))
         if query == "":
             logger.info("Query is Empty")
