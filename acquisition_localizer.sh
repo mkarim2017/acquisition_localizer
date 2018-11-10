@@ -11,15 +11,15 @@ export PATH=$BASE_PATH:$PATH
 source $HOME/verdi/bin/activate
 
 echo "##########################################" 1>&2
-echo -n "Running sling_acquisitions.py on $1: " 1>&2
+echo -n "Running acquisition_localizer.py on $1: " 1>&2
 date 1>&2
-$BASE_PATH/sling_acquisitions.py $BASE_PATH/$1 > sling_acquisitions.log 2>&1
+$BASE_PATH/acquisition_localizer.py $BASE_PATH/$1 > acquisition_localizer.log 2>&1
 STATUS=$?
-echo -n "Finished running $1 sling_acquisitions.py: " 1>&2
+echo -n "Finished running $1 acquisition_localizer.py: " 1>&2
 date 1>&2
 if [ $STATUS -ne 0 ]; then
-  echo "Failed to run $1 sling_acquisitions.py." 1>&2
-  cat sling_acquisitions.log 1>&2
+  echo "Failed to run $1 acquisition_localizer.py." 1>&2
+  cat acquisition_localizer.log 1>&2
   echo "{}"
   exit $STATUS
 fi
