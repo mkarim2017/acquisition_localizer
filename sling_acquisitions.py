@@ -275,7 +275,7 @@ def get_acq_data_from_query(query):
  
     for i in range (len(hits["hits"])):
         acq_data = hits["hits"][i]["_source"]
-        logger.info("\n%s" %acq_data)
+        #logger.info("\n%s" %acq_data)
         acq = hits["hits"][i]["_id"]
         status = check_slc_status(acq_data['metadata']['identifier'])
         if status:
