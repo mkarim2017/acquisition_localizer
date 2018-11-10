@@ -274,17 +274,17 @@ def get_acq_data_from_query(query):
         logger.info("get_acq_data_from_query : Found %s data" %hits["total"])
  
     for i in range (len(hits["hits"])):
-        acq_data = hits["hits"][i]
+        acq_data = hits["hits"][i]["_source"]
         logger.info("\n%s" %acq_data)
-        acq = acq_data["_id"]
-        status = check_slc_status(acq_data["_source"]['metadata']['identifier'])
+        acq = hits["hits"][i]["_id"]
+        status = check_slc_status(acq_data['metadata']['identifier'])
         if status:
             # status=1
-            logger.info("%s exists" %acq_data["_source"]['metadata']['identifier'])
+            logger.info("%s exists" %acq_data['metadata']['identifier'])
             acq_info[acq]=get_acq_object(acq, acq_data, 1)
         else:
             #status = 0
-            logger.info("%s does NOT exist"%acq_data["_source"]['metadata']['identifier'])
+            logger.info("%s does NOT exist"%acq_data['metadata']['identifier'])
             acq_info[acq]=get_acq_object(acq, acq_data, 0)
     
     return acq_info 
