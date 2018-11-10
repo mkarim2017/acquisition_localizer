@@ -55,17 +55,6 @@ def get_acq_object(acq_id, acq_data, localized=False, job_id=None, job_status = 
 
     }
 
-def get_area(coords):
-    '''get area of enclosed coordinates- determines clockwise or counterclockwise order'''
-    n = len(coords) # of corners
-    area = 0.0
-    for i in range(n):
-        j = (i + 1) % n
-        area += coords[i][1] * coords[j][0]
-        area -= coords[j][1] * coords[i][0]
-    #area = abs(area) / 2.0
-    return area / 2
-
 
 def query_es(endpoint, doc_id):
     """
@@ -118,53 +107,6 @@ def query_es(endpoint, doc_id):
     return result
 
 
-def create_dataset_json(id, version, met_file, ds_file):
-    """Write dataset json."""
-
-    logger.info("create_dataset_json")
-
-    # get metadata
-    with open(met_file) as f:
-        md = json.load(f)
-
-    ds = {
-        'creation_timestamp': "%sZ" % datetime.utcnow().isoformat(),
-        'version': version,
-        'label': id
-    }
-
-    coordinateste_dataset_json = None
-
-    try:
-
-        coordinates = md['union_geojson']['coordinates']
-    
-        cord_area = get_area(coordinates[0])
-        if not cord_area>0:
-            logger.info("creating dataset json. coordinates are not clockwise, reversing it")
-            coordinates = [coordinates[0][::-1]]
-            logger.info(coordinates)
-            cord_area = get_area(coordinates[0])
-            if not cord_area>0:
-                logger.info("creating dataset json. coordinates are STILL NOT  clockwise")
-        else:
-            logger.info("creating dataset json. coordinates are already clockwise")
-
-        ds['location'] =  {'type': 'Polygon', 'coordinates': coordinates}
-        logger.info("create_dataset_json location : %s" %ds['location'])
-
-    except Exception as err:
-        logger.info("create_dataset_json: Exception : ")
-        logger.warn(str(err))
-        logger.warn("Traceback: {}".format(traceback.format_exc()))
-
-
-    ds['starttime'] = md['starttime']
-    ds['endtime'] = md['endtime']
-
-    # write out dataset json
-    with open(ds_file, 'w') as f:
-        json.dump(ds, f, indent=2)
 
 def get_job_status(job_id):
     """
@@ -314,7 +256,7 @@ def get_acq_data_from_query(query):
     else:
         logger.info("get_acq_data_from_query : Found %s data" %hits["total"])
  
-    for i in range (len(hits["hits"]):
+    for i in range (len(hits["hits"])):
         acq_data = hits["hits"][i]
         acq = acq_data["_id"]
         status = check_slc_status(acq_data['metadata']['identifier'])
