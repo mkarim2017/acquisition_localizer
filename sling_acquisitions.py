@@ -251,8 +251,8 @@ def get_acq_data_from_query(query):
     acq_info = {}
 
     hits = util.get_query_data(query)
-    if hits["total"]:
-        raise "No Acquisition Found that Matched the Criteria."
+    if hits["total"] == 0:
+        raise RuntimeError("No Acquisition Found that Matched the Criteria.")
     else:
         logger.info("get_acq_data_from_query : Found %s data" %hits["total"])
  
