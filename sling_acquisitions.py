@@ -305,6 +305,12 @@ def check_slc_status(slc_id):
 
     return False
 
+def get_acq_data_from_query(query):
+    acq_info = {}
+
+    data = util.get_query_data(query)
+    print(data)
+    return acq_info 
 
 def resolve_source(ctx_file):
     """Resolve best URL from acquisition."""
@@ -323,16 +329,27 @@ def resolve_source(ctx_file):
 
     sleep_seconds = 30
     
+    spyddder_extract_version = "standard-product"
+    acquisition_localizer_version = "standard-product"
 
+    
     # build args
     project = ctx["input_metadata"]["project"]
     if type(project) is list:
         project = project[0]
 
+    acq_info = {}
+
+    if "query" in ctx:
+        acq_info = get_acq_data_from_query(ctx["query"])
+    exit(0)
+        
     acq_list = ctx["input_metadata"]["acq_list"]   
  
-    spyddder_extract_version = ctx["spyddder_extract_version"]
-    acquisition_localizer_version = ctx["acquisition_localizer_version"]
+    if "spyddder_extract_version" in ctx:
+        spyddder_extract_version = ctx["spyddder_extract_version"]
+    if "acquisition_localizer_version" in ctx:
+        acquisition_localizer_version = ctx["acquisition_localizer_version"]
     ''' 
     spyddder_extract_version = ctx["input_metadata"]["spyddder_extract_version"]
     acquisition_localizer_version = ctx["input_metadata"]["acquisition_localizer_version"]

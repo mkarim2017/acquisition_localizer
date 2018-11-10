@@ -122,6 +122,29 @@ def get_partial_grq_data(id):
     return result['hits']['hits'][0]
 
 
+def get_query_data(query):
+    es_url = GRQ_URL
+    es_index = "grq"
+
+    print(query)
+
+    if es_url.endswith('/'):
+        search_url = '%s%s/_search' % (es_url, es_index)
+    else:
+        search_url = '%s/%s/_search' % (es_url, es_index)
+    r = requests.post(search_url, data=json.dumps(query))
+
+    if r.status_code != 200:
+        print("Failed to query %s:\n%s" % (es_url, r.text))
+        print("query: %s" % json.dumps(query, indent=2))
+        print("returned: %s" % r.text)
+        r.raise_for_status()
+
+    result = r.json()
+    print(result['hits']['total'])
+    return result['hits']['hits'][0]
+
+
 def get_acquisition_data(id):
     es_url = GRQ_URL
     es_index = "grq_*_*acquisition*"
