@@ -198,8 +198,8 @@ def get_job_status(job_id):
         #print ("Original JOB info: \n%s"%json.dumps(orig_job_info))
         orig_job_info = orig_job_info["hits"]["hits"][0]
         orig_job_status = str(orig_job_info["_source"]["status"])
-	logger.info("Check Job Status : Job %s was Deduped. The new/origianl job id is %s whose status is : %s" %(job_id, return_job_id, return_job_status)) 
-	return_job_status = orig_job_status
+        logger.info("Check Job Status : Job %s was Deduped. The new/origianl job id is %s whose status is : %s" %(job_id, return_job_id, return_job_status)) 
+        return_job_status = orig_job_status
 
         if  orig_job_status == "job-failed":
             message = "Job was deduped against a failed job with id: %s, please retry job."%orig_job_id
@@ -211,8 +211,8 @@ def get_job_status(job_id):
             # return products staged and context of original job
             message = "success"
     else:
-	return_job_id = job_id
-    	return_job_status = result["_source"]["status"]
+        return_job_id = job_id
+        return_job_status = result["_source"]["status"]
 
     return return_job_status, return_job_id
 
@@ -291,7 +291,7 @@ def check_slc_status(slc_id, index_suffix):
     total = result['hits']['total']
 
     if total > 0:
-	return True
+        return True
 
     return False
 
@@ -411,14 +411,14 @@ def sling(acq_info, spyddder_extract_version, acquisition_localizer_version, pro
     # acq_info has now all the ACQ's status. Now submit the Sling job for the one's whose status = 0 and update the slc_info with job id
     for acq_id in acq_info.keys():
 
-	if not acq_info[acq_id]['localized']:
-	    acq_data = acq_info[acq_id]['acq_data']
-	    job_id = submit_sling_job(project, spyddder_extract_version, acquisition_localizer_version, acq_data, job_priority)
+        if not acq_info[acq_id]['localized']:
+            acq_data = acq_info[acq_id]['acq_data']
+            job_id = submit_sling_job(project, spyddder_extract_version, acquisition_localizer_version, acq_data, job_priority)
  
-	    acq_info[acq_id]['job_id'] = job_id
-	    job_status, new_job_id  = get_job_status(job_id)
-	    acq_info[acq_id]['job_id'] = new_job_id
-	    acq_info[acq_id]['job_status'] = job_status
+            acq_info[acq_id]['job_id'] = job_id
+            job_status, new_job_id  = get_job_status(job_id)
+            acq_info[acq_id]['job_id'] = new_job_id
+            acq_info[acq_id]['job_status'] = job_status
 
 
     # Now loop in until all the jobs are completed 
@@ -427,22 +427,22 @@ def sling(acq_info, spyddder_extract_version, acquisition_localizer_version, pro
     while not all_done:
 
         for acq_id in acq_info.keys():
-	    acq_data = acq_info[acq_id]['acq_data']
+            acq_data = acq_info[acq_id]['acq_data']
             if not acq_info[acq_id]['localized']: 
-		job_status, job_id  = get_job_status(acq_info[acq_id]['job_id'])  
-  		if job_status == "job-completed":
-		    logger.info("Success! sling job for slc : %s  with job id : %s COMPLETED!!" %(acq_data['metadata']['identifier'], job_id))
-		    acq_info[acq_id]['job_id'] = job_id
-		    acq_info[acq_id]['job_status'] = job_status
-		    acq_info[acq_id]['localized'] = check_slc_status(acq_data['metadata']['identifier'])
+                job_status, job_id  = get_job_status(acq_info[acq_id]['job_id'])  
+                if job_status == "job-completed":
+                    logger.info("Success! sling job for slc : %s  with job id : %s COMPLETED!!" %(acq_data['metadata']['identifier'], job_id))
+                    acq_info[acq_id]['job_id'] = job_id
+                    acq_info[acq_id]['job_status'] = job_status
+                    acq_info[acq_id]['localized'] = check_slc_status(acq_data['metadata']['identifier'])
 
-		elif job_status == "job-failed":
-		    err_msg = "Error : Sling job %s FAILED. So existing out of the sciflo!!....." %job_id
-	            logger.info(err_msg)
-		    raise RuntimeError(err_msg)
+                elif job_status == "job-failed":
+                    err_msg = "Error : Sling job %s FAILED. So existing out of the sciflo!!....." %job_id
+                    logger.info(err_msg)
+                    raise RuntimeError(err_msg)
 
-		    '''
-		    download_url = acq_data["metadata"]["download_url"]
+                    '''
+                    download_url = acq_data["metadata"]["download_url"]
 	
             	    job_id = submit_sling_job(project, spyddder_extract_version, acquisition_localizer_version, acq_data, job_priority)
             	    acq_info[acq_id]['job_id'] = job_id
@@ -452,20 +452,20 @@ def sling(acq_info, spyddder_extract_version, acquisition_localizer_version, pro
             	    acq_info[acq_id]['job_status'] = job_status
 		    logger.info("After checking job status, New Job Id : %s and status is %s" %(acq_info[acq_id]['job_id'], acq_info[acq_id]['job_status']))
 		    '''
-		else:
-		    acq_info[acq_id]['job_id'] = job_id
+                else:
+                    acq_info[acq_id]['job_id'] = job_id
                     acq_info[acq_id]['job_status'] = job_status
-		    logger.info("Sling job for %s  : Job id : %s. Job Status : %s" %(acq_info[acq_id], acq_info[acq_id]['job_id'], acq_info[acq_id]['job_status']))
+                    logger.info("Sling job for %s  : Job id : %s. Job Status : %s" %(acq_info[acq_id], acq_info[acq_id]['job_id'], acq_info[acq_id]['job_status']))
 
-  	logger.info("Checking if all job completed")
-	all_done = check_all_job_completed(acq_info)
-	if not all_done:
-	    now = datetime.utcnow()
-	    delta = (now - sling_check_start_time).total_seconds()
+        logger.info("Checking if all job completed")
+        all_done = check_all_job_completed(acq_info)
+        if not all_done:
+            now = datetime.utcnow()
+            delta = (now - sling_check_start_time).total_seconds()
             if delta >= sling_completion_max_sec:
-            	raise RuntimeError("Error : Sling jobs NOT completed after %.2f hours!!" %(delta/3600))
-	    logger.info("All job not completed. So sleeping for %s seconds" %sleep_seconds)
-	    time.sleep(sleep_seconds)
+                raise RuntimeError("Error : Sling jobs NOT completed after %.2f hours!!" %(delta/3600))
+            logger.info("All job not completed. So sleeping for %s seconds" %sleep_seconds)
+            time.sleep(sleep_seconds)
 
 
 
@@ -478,19 +478,19 @@ def sling(acq_info, spyddder_extract_version, acquisition_localizer_version, pro
     slc_check_start_time = datetime.utcnow()
     while not all_exists:
         all_exists = True
-	for acq_id in acq_info.keys():
+        for acq_id in acq_info.keys():
             if not acq_info[acq_id]['localized']:
-		acq_data = acq_info[acq_id]['acq_data']
- 		acq_info[acq_id]['localized'] = check_slc_status(acq_data['metadata']['identifier'])
+                acq_data = acq_info[acq_id]['acq_data']
+                acq_info[acq_id]['localized'] = check_slc_status(acq_data['metadata']['identifier'])
 		
-		if not acq_info[acq_id]['localized']:
-		    logger.info("%s NOT localized!!" %acq_data['metadata']['identifier'])
-		    all_exists = False
-		    break
-	if not all_exists:
-	    now = datetime.utcnow()
+                if not acq_info[acq_id]['localized']:
+                    logger.info("%s NOT localized!!" %acq_data['metadata']['identifier'])
+                    all_exists = False
+                    break
+        if not all_exists:
+            now = datetime.utcnow()
             delta = (now-slc_check_start_time).total_seconds()
-	    if delta >= slc_check_max_sec:
+            if delta >= slc_check_max_sec:
                 raise RuntimeError("Error : SLC not available %.2f min after sling jobs completed!!" %(delta/60))
             time.sleep(60)
 
@@ -535,11 +535,11 @@ def check_all_job_completed(acq_info):
     all_done = True
     for acq_id in acq_info.keys():
         if not acq_info[acq_id]['localized']:  
-	    job_status = acq_info[acq_id]['job_status']
-	    if not job_status == "job-completed":
-		logger.info("check_all_job_completed : %s NOT completed!!" %acq_info[acq_id]['job_id'])	
-		all_done = False
-		break
+            job_status = acq_info[acq_id]['job_status']
+            if not job_status == "job-completed":
+                logger.info("check_all_job_completed : %s NOT completed!!" %acq_info[acq_id]['job_id'])	
+                all_done = False
+                break
     return all_done
 
 
