@@ -142,7 +142,7 @@ def get_query_data(query):
 
     result = r.json()
     print(result['hits']['total'])
-    return result['hits']['hits'][0]
+    return result['hits']
 
 
 def get_acquisition_data(id):

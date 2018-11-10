@@ -308,8 +308,25 @@ def check_slc_status(slc_id):
 def get_acq_data_from_query(query):
     acq_info = {}
 
-    data = util.get_query_data(query)
-    print(data)
+    hits = util.get_query_data(query)
+    if hits["total"]:
+        raise "No Acquisition Found that Matched the Criteria."
+    else:
+        logger.info("get_acq_data_from_query : Found %s data" %hits["total"])
+ 
+    for i in range (len(hits["hits"]):
+        acq_data = hits["hits"][i]
+        acq = acq_data["_id"]
+        status = check_slc_status(acq_data['metadata']['identifier'])
+        if status:
+            # status=1
+            logger.info("%s exists" %acq_data['metadata']['identifier'])
+            acq_info[acq]=get_acq_object(acq, acq_data, 1)
+        else:
+            #status = 0
+            logger.info("%s does NOT exist"%acq_data['metadata']['identifier'])
+            acq_info[acq]=get_acq_object(acq, acq_data, 0)
+    
     return acq_info 
 
 def resolve_source(ctx_file):
@@ -322,7 +339,18 @@ def resolve_source(ctx_file):
         ctx = json.load(f)
     
     '''
-    settings_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.json')
+    settings_file = os{
+    "query": {
+      "filtered": {
+        "query": {
+          "query_string": {
+            "default_operator": "OR", 
+            "query": "\"acquisition-S1A_IW_SLC__1SDV_20181109T152457_20181109T152523_024513_02B065_B96B\""
+          }
+        }
+      }
+    }
+  }.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.json')
     with open(settings_file) as f:
         settings = json.load(f)
     '''
@@ -334,7 +362,7 @@ def resolve_source(ctx_file):
 
     
     # build args
-    project = ctx["input_metadata"]["project"]
+    project = ctx["project"]
     if type(project) is list:
         project = project[0]
 
@@ -343,8 +371,9 @@ def resolve_source(ctx_file):
     if "query" in ctx:
         acq_info = get_acq_data_from_query(ctx["query"])
     exit(0)
-        
-    acq_list = ctx["input_metadata"]["acq_list"]   
+     
+    acq_list = []   
+    #acq_list = ctx["input_metadata"]["acq_list"]   
  
     if "spyddder_extract_version" in ctx:
         spyddder_extract_version = ctx["spyddder_extract_version"]
@@ -355,7 +384,7 @@ def resolve_source(ctx_file):
     acquisition_localizer_version = ctx["input_metadata"]["acquisition_localizer_version"]
     standard_product_ifg_version = ctx["input_metadata"]["standard_product_ifg_version"]
     '''
-    job_priority = ctx["input_metadata"]["job_priority"]
+    job_priority = ctx["job_priority"]
     job_type, job_version = ctx['job_specification']['id'].split(':') 
 
     queues = []  # where should we get the queue value
