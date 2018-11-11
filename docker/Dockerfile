@@ -37,8 +37,7 @@ RUN set -ex \
 
 RUN set -ex \
  && sudo chown -R ops:ops /home/ops/verdi/ops/acquisition_localizer \
- && mv /home/ops/verdi/ops/acquisition_localizer/spyddder-man /home/ops/verdi/ops/ \
- && mv /home/ops/verdi/ops/acquisition_localizer/qquery/ /home/ops/verdi/ops/
+ && mv /home/ops/verdi/ops/acquisition_localizer/spyddder-man /home/ops/verdi/ops/ 
 
 
 
