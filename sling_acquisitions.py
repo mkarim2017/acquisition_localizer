@@ -319,8 +319,8 @@ def resolve_source(ctx_file):
 
     sleep_seconds = 30
     
-    spyddder_extract_version = "standard-product"
-    acquisition_localizer_version = "standard-product"
+    spyddder_extract_version = "bc-cluster"
+    acquisition_localizer_version = "bc-cluster"
 
     
     # build args
@@ -330,7 +330,7 @@ def resolve_source(ctx_file):
 
     acq_info = {}
 
-    if "acq_list" in ctx:
+    if "products" in ctx:
         acq_list = ctx["acq_list"]
         logger.info("Acq List Type : %s" %type(acq_list))
         acq_info = get_acq_data_from_list(acq_list)
@@ -536,13 +536,13 @@ def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_ve
     #job_queue = "%s-job_worker-large" % project
     job_queue = "factotum-job_worker-small" 
     rule = {
-        "rule_name": "standard-product-sling",
+        "rule_name": "acquisition_localizer_multi_source-sling",
         "queue": job_queue,
         "priority": '5',
         "kwargs":'{}'
     }
 
-    sling_job_name = "standard_product-%s-%s" %(job_type, acq_data["metadata"]["identifier"])
+    sling_job_name = "sling-%s-%s" %(job_type, acq_data["metadata"]["identifier"])
 
 
     params = [
