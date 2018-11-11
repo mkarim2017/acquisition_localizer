@@ -20,10 +20,6 @@
       "placeholder": "spyddder-man extract job version"
     },
     {
-      "name": "input_metadata",
-      "from": "dataset_jpath:_source.metadata"
-    },
-    {
       "name":"products",
       "type":"text",
       "from":"dataset_jpath:_id"

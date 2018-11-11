@@ -263,7 +263,7 @@ def get_acq_data_from_list(acq_list):
             #status = 0 
             logger.info("%s does NOT exist"%acq_data['metadata']['identifier']) 
             acq_info[acq]=get_acq_object(acq, acq_data, 0)
-
+    return acq_info
 
 def get_acq_data_from_query(query):
     logger.info("get_acq_data_from_query")
@@ -338,11 +338,6 @@ def resolve_source(ctx_file):
         spyddder_extract_version = ctx["spyddder_extract_version"]
     if "acquisition_localizer_version" in ctx:
         acquisition_localizer_version = ctx["acquisition_localizer_version"]
-    ''' 
-    spyddder_extract_version = ctx["input_metadata"]["spyddder_extract_version"]
-    acquisition_localizer_version = ctx["input_metadata"]["acquisition_localizer_version"]
-    standard_product_ifg_version = ctx["input_metadata"]["standard_product_ifg_version"]
-    '''
     job_priority = ctx["job_priority"]
     job_type, job_version = ctx['job_specification']['id'].split(':') 
 
@@ -452,40 +447,6 @@ def sling(acq_info, spyddder_extract_version, acquisition_localizer_version, pro
                 raise RuntimeError("Error : SLC not available %.2f min after sling jobs completed!!" %(delta/60))
             time.sleep(60)
 
-    '''
-    # At this point, we have all the slc downloaded and we are ready to submit a create standard product job
-    acq_infoes =[]
-    projects = []
-    job_priorities = []
-    job_types = []
-    job_versions = []
-    #standard_product_ifg_versions = []
-    dem_types = []
-    tracks = []
-    starttimes = []
-    endtimes = []
-    bboxes = []
-    union_geojsons =[]
-    master_scenes = []
-    slave_scenes = []
-    master_scenes.append(master_scene)
-    slave_scenes.append(slave_scene)
-
-    acq_infoes.append(acq_info)
-    projects.append(project)
-    job_priorities.append(job_priority)
-    #standard_product_ifg_versions.append(standard_product_ifg_version)
-    dem_types.append(dem_type)
-    tracks.append(track)
-    starttimes.append(starttime)
-    endtimes.append(endtime)
-    union_geojsons.append(union_geojson)
-    if bbox:
-        bboxes.append(bbox)
-
-    return acq_infoes, projects, job_priorities, dem_types, tracks, starttimes, endtimes, master_scenes, slave_scenes, union_geojsons, bboxes
-
-    '''
 
         
 
@@ -509,8 +470,8 @@ def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_ve
 
     """Map function for spyddder-man extract job."""
 
-    acquisition_localizer_version = "standard-product"
-    spyddder_extract_version = "standard-product"
+    acquisition_localizer_version = "bc-cluster"
+    spyddder_extract_version = "bc-cluster"
     job_submit_url = '%s/mozart/api/v0.1/job/submit' % MOZART_URL
 
     # set job type and disk space reqs
