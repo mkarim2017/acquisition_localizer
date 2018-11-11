@@ -16,10 +16,6 @@
   "time_limit": 87000, 
   "params" : [
     {
-      "name": "query",
-      "destination": "context"
-    },
-    {
       "name": "project",
       "destination": "context"
     },
@@ -28,12 +24,12 @@
       "destination": "context"
     },
     {
-      "name": "acquisition_localizer_version",
-      "destination": "context"
-    },
-    {
       "name": "input_metadata",
       "destination": "context"
-    }
+    }, 
+    {
+      "name":"products",
+      "destination":"context"
+    } 
   ]
 }
