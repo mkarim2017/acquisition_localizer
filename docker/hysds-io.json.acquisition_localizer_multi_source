@@ -13,16 +13,12 @@
       "enumerables": ["aria", "grfn", "mem", "urgent-response", "dwr"]
     },
     {
-      "name": "query",
-      "from": "passthrough"
-    },
-    {
       "name": "spyddder_extract_version",
       "from": "submitter",
       "type": "jobspec_version",
       "version_regex": "job-spyddder-extract",
       "placeholder": "spyddder-man extract job version"
-    }
+    },
     {
       "name": "input_metadata",
       "from": "dataset_jpath:_source.metadata"
