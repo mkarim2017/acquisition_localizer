@@ -330,20 +330,9 @@ def resolve_source(ctx_file):
 
     acq_info = {}
 
-    if "products" in ctx:
-        acq_list = ctx["acq_list"]
-        logger.info("Acq List Type : %s" %type(acq_list))
-        acq_info = get_acq_data_from_list(acq_list)
-    elif "query" in ctx:
-        query = ctx["query"]
-        logger.info("query type : %s" %type(query))
-        if query == "":
-            logger.info("Query is Empty")
-        acq_info = get_acq_data_from_query(query)
-    else:
-        raise RuntimeError("Neither Query nor Acquistion List Present!!"
-)   
-    #acq_list = ctx["input_metadata"]["acq_list"]   
+    acq_list = ctx["products"]
+    logger.info("Acq List Type : %s" %type(acq_list))
+    acq_info = get_acq_data_from_list(acq_list)
  
     if "spyddder_extract_version" in ctx:
         spyddder_extract_version = ctx["spyddder_extract_version"]
