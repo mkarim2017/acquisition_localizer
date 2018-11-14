@@ -470,7 +470,7 @@ def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_ve
 
     """Map function for spyddder-man extract job."""
 
-    acquisition_localizer_version = "master"
+    acquisition_localizer_version = "bc-cluster"
     spyddder_extract_version = "develop"
     job_submit_url = '%s/mozart/api/v0.1/job/submit' % MOZART_URL
 
@@ -483,8 +483,8 @@ def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_ve
     #acq_id = acq_data['acq_id']
 
     # set job queue based on project
-    job_queue = "%s-job_worker-large" % project
-    #job_queue = "factotum-job_worker-small" 
+    #job_queue = "%s-job_worker-large" % project
+    job_queue = "factotum-job_worker-small" 
     rule = {
         "rule_name": "acquisition_localizer_multi_source-sling",
         "queue": job_queue,
