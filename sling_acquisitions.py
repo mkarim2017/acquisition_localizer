@@ -476,7 +476,7 @@ def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_ve
 
     # set job type and disk space reqs
     job_type = "job-acquisition_localizer:{}".format(acquisition_localizer_versions)
-
+    logger.info("\nSubmitting job of type : %s" %job_type)
      # set job type and disk space reqs
     disk_usage = "300GB"
     #logger.info(acq_data)
