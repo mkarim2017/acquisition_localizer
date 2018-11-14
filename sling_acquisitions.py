@@ -336,8 +336,8 @@ def resolve_source(ctx_file):
  
     if "spyddder_extract_version" in ctx:
         spyddder_extract_version = ctx["spyddder_extract_version"]
-    if "acquisition_localizer_version" in ctx:
-        acquisition_localizer_version = ctx["acquisition_localizer_version"]
+    if "spyddder-man_version" in ctx:
+        acquisition_localizer_version = ctx["spyddder-man_version"]
     job_priority = ctx["job_priority"]
     job_type, job_version = ctx['job_specification']['id'].split(':') 
 
@@ -470,8 +470,8 @@ def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_ve
 
     """Map function for spyddder-man extract job."""
 
-    acquisition_localizer_version = "master"
-    spyddder_extract_version = "develop"
+    #acquisition_localizer_version = "master"
+    #spyddder_extract_version = "develop"
     job_submit_url = '%s/mozart/api/v0.1/job/submit' % MOZART_URL
 
     # set job type and disk space reqs
@@ -510,11 +510,6 @@ def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_ve
             "name": "spyddder_extract_version",
             "from": "value",
             "value": spyddder_extract_version
-        },
-        {
-            "name": "acquisition_localizer_version",
-            "from": "value",
-            "value": acquisition_localizer_version
         },
         {
             "name": "dataset_type",
