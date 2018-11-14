@@ -320,7 +320,7 @@ def resolve_source(ctx_file):
     sleep_seconds = 30
     
     spyddder_extract_version = "develop"
-    acquisition_localizer_version = "bc-cluster"
+    acquisition_localizer_version = "develop"
 
     
     # build args
