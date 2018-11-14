@@ -512,6 +512,11 @@ def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_ve
             "value": spyddder_extract_version
         },
         {
+            "name": "acquisition_localizer_version",
+            "from": "value",
+            "value": acquisition_localizer_version
+        },
+        {
             "name": "dataset_type",
             "from": "value",
             "value": acq_data["dataset_type"]
