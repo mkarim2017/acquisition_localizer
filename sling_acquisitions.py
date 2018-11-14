@@ -466,7 +466,7 @@ def check_all_job_completed(acq_info):
 
 
 
-def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_versions, acq_data, priority):
+def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_version, acq_data, priority):
 
     """Map function for spyddder-man extract job."""
 
@@ -475,7 +475,7 @@ def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_ve
     job_submit_url = '%s/mozart/api/v0.1/job/submit' % MOZART_URL
 
     # set job type and disk space reqs
-    job_type = "job-acquisition_localizer:{}".format(acquisition_localizer_versions)
+    job_type = "job-acquisition_localizer:{}".format(acquisition_localizer_version)
     logger.info("\nSubmitting job of type : %s" %job_type)
      # set job type and disk space reqs
     disk_usage = "300GB"
