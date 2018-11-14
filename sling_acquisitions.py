@@ -470,8 +470,8 @@ def submit_sling_job(project, spyddder_extract_version, acquisition_localizer_ve
 
     """Map function for spyddder-man extract job."""
 
-    acquisition_localizer_version = "bc-cluster"
-    spyddder_extract_version = "master"
+    acquisition_localizer_version = "develop"
+    spyddder_extract_version = "develop"
     job_submit_url = '%s/mozart/api/v0.1/job/submit' % MOZART_URL
 
     # set job type and disk space reqs
